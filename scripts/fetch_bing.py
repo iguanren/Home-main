@@ -18,7 +18,7 @@ import json
 import os
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timezone, timedelta
 
 import requests
 
@@ -28,6 +28,7 @@ UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
 MKT = "zh-CN"
 IDX_RANGE = range(0, 8)  # 每次抓最近 8 天（idx=0 今天 … idx=7 八天前）
 SLEEP = 0.5            # 请求间隔，避免频率限制
+BJ_TZ = timezone(timedelta(hours=8))   # 北京时间（GitHub runner 是 UTC，必须显式转换）
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 DATA_FILE = os.path.join(ROOT, "data.json")
@@ -82,7 +83,7 @@ def main():
     parser.add_argument("--dry-run", action="store_true", help="只打印不写文件")
     args = parser.parse_args()
 
-    print(f"[{datetime.now():%Y-%m-%d %H:%M:%S}] 开始抓取 idx=0..7 ...")
+    print(f"[{datetime.now(BJ_TZ):%Y-%m-%d %H:%M:%S}] 开始抓取 idx=0..7 ...")
     fresh = []
     for idx in IDX_RANGE:
         item = fetch_day(idx)
@@ -101,7 +102,7 @@ def main():
         merged[item["date"]] = item
     items = sorted(merged.values(), key=lambda x: x["date"], reverse=True)
     kept = items
-    today = datetime.now().strftime("%Y%m%d")
+    today = datetime.now(BJ_TZ).strftime("%Y%m%d")   # 北京时间，避免 UTC 差一天
     print(f"合并后 {len(items)} 条（全量归档，无限攒数据）")
     for it in kept[:8]:
         print(f"  {it['date']} | {it['title'][:30]} | {it['full']}")
@@ -112,7 +113,7 @@ def main():
         return
 
     payload = {
-        "updated": datetime.now().strftime("%Y-%m-%dT%H:%M:%S+08:00"),
+        "updated": datetime.now(BJ_TZ).strftime("%Y-%m-%dT%H:%M:%S+08:00"),
         "today": today,
         "count": len(kept),
         "items": kept,

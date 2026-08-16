@@ -306,6 +306,7 @@
             var item = currentList[lbIndex];
             lbImg.style.opacity = '0';
             lbLoading.style.display = 'flex';
+            lbLoading.innerHTML = '<div class="wp-spin"></div><p>正在加载 4K 原图...</p>';   // 重置，避免残留上次的错误文案
             lbImg.onload = function() {
                 lbImg.style.opacity = '1';
                 lbLoading.style.display = 'none';
@@ -436,8 +437,9 @@
         // ============ 初始化 ============
         var todayStr = '';
         loadData().then(function(d) {
+            d = d || {};              // 兜底：data.json 加载失败时 d 为 undefined
             todayStr = d.today || '';
-            if (d && d.items && d.items.length) {
+            if (d.items && d.items.length) {
                 applyBg(d.items[0].full);   // 背景 = 今日 4K
             }
             renderGallery();

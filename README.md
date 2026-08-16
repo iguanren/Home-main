@@ -14,12 +14,12 @@ iguanren.eu.org 主站源码：读书分享 + 必应每日壁纸（近 30 天卡
 ├── sitemap.xml             # 站点地图（提交搜索引擎收录）
 ├── robots.txt              # 爬虫规则（指向 sitemap）
 ├── scripts/fetch_bing.py   # 抓取脚本：必应 HPImageArchive idx=0..7 → data.json
-└── .github/workflows/update.yml  # 每天北京时间 0:10 自动抓取并推送
+└── .github/workflows/update.yml  # 每天 3 次自动抓取并推送（8:10/16:10/次日0:10）
 ```
 
 ## 工作原理
 
-1. **GitHub Actions** 每天北京时间 0:10（UTC 16:10）运行 `fetch_bing.py`
+1. **GitHub Actions** 每天跑 3 次（北京时间 8:10 / 16:10 / 次日 0:10，UTC 0:10/8:10/16:10）运行 `fetch_bing.py`——必应切图时间不固定，多时段兜底防漏抓
 2. 脚本抓必应官方接口最近 8 天壁纸（idx=0 今天 ~ idx=7），合并进 `data.json`，按日期去重
 3. **全量归档**：数据永不删除，无限攒历史（每年约 +120KB，零成本）
 4. 数据有变化才提交推送（无空提交）
