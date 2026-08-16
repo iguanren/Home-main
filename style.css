@@ -511,9 +511,10 @@ footer p {
 }
 :root.night .wp-card {
     background: #232329;
-    border-color: rgba(255, 255, 255, 0.08);
+    border-color: transparent;                    /* 去白色描边，消除夜间白线 */
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.4);
 }
+:root.night .wp-card img { background: #2a2a30; }  /* 图片加载前占位改深色，不再显浅灰块 */
 :root.night .wp-card-title { color: #ddd; }
 :root.night .wp-card-date { color: #888; }
 :root.night .gallery-empty { color: #777; }
