@@ -73,12 +73,24 @@ body {
 
 .card {
     border: none;
-    padding: 40px 56px 0px;
+    padding: 40px 56px 40px;   /* 底部留白，文字不贴边 */
     border-radius: 0;
     background: transparent;
     backdrop-filter: none;
     -webkit-backdrop-filter: none;
     box-shadow: none;
+}
+
+/* 正文排版：段落间距 + 行距 */
+.card p {
+    margin: 0 0 16px;
+    line-height: 1.9;
+}
+.card p:last-child { margin-bottom: 0; }
+
+/* 按钮与正文之间留空 */
+.card .btn-row {
+    margin-bottom: 28px;
 }
 
 h1 { font-size: 36px; margin-bottom: .5em; color: #000; }
@@ -242,6 +254,15 @@ footer .mail-icon:hover { color: #5b7fff; }
     flex-direction: column;
     gap: 12px;
     align-items: center;
+    opacity: 0;
+    transform: translateY(10px);
+    pointer-events: none;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.float-actions.show {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
 }
 
 .float-btn {
@@ -253,7 +274,6 @@ footer .mail-icon:hover { color: #5b7fff; }
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
     color: #fff;
-    font-size: 20px;
     cursor: pointer;
     display: flex;
     align-items: center;
@@ -261,26 +281,15 @@ footer .mail-icon:hover { color: #5b7fff; }
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
     transition: background 0.2s, transform 0.2s;
     line-height: 1;
+    padding: 0;
 }
 .float-btn:hover {
     background: rgba(60, 60, 70, 0.7);
     transform: translateY(-2px);
 }
 
-/* 回到顶部：默认隐藏，滚动超过半屏才显示 */
-.back-top {
-    position: relative;
-    opacity: 0;
-    transform: translateY(10px);
-    pointer-events: none;
-    transition: opacity 0.3s ease, transform 0.3s ease;
-}
-.back-top.show {
-    opacity: 1;
-    transform: translateY(0);
-    pointer-events: auto;
-}
-
+/* 回到顶部：环形进度 + 箭头图标 */
+.back-top { position: relative; }
 .progress-ring {
     position: absolute;
     top: 0;
@@ -290,18 +299,17 @@ footer .mail-icon:hover { color: #5b7fff; }
 .progress-ring circle { fill: none; stroke-width: 3; }
 .ring-bg { stroke: rgba(255, 255, 255, 0.2); }
 .ring-fg { stroke: #5b7fff; stroke-linecap: round; }
-
-.back-top-arrow {
-    font-size: 18px;
-    font-weight: 700;
+.back-top-icon {
+    display: block;
     color: #fff;
 }
 
 /* 移动端悬浮按钮小一点 */
 @media (max-width: 767px) {
     .float-actions { right: 14px; bottom: 14px; gap: 10px; }
-    .float-btn { width: 42px; height: 42px; font-size: 18px; }
+    .float-btn { width: 42px; height: 42px; }
 }
+
 
 /* ============================================================
    夜间模式（html.night 覆盖规则）
@@ -354,8 +362,6 @@ footer .mail-icon:hover { color: #5b7fff; }
 :root.night .wp-card-title { color: #ddd; }
 :root.night .wp-card-date { color: #888; }
 :root.night .gallery-empty { color: #777; }
-:root.night .gallery-head h2 { color: #eee; }
-:root.night .gallery-head p { color: #999; }
 
 :root.night .float-btn {
     background: rgba(20, 20, 26, 0.7);
@@ -639,11 +645,6 @@ footer .mail-icon:hover { color: #5b7fff; }
     color: rgba(255, 255, 255, 0.5);
     margin-top: 6px;
 }
-.lb-counter {
-    font-size: 12px;
-    color: rgba(255, 255, 255, 0.35);
-    margin-top: 2px;
-}
 
 /* ============================================================
    响应式：平板 / 手机
@@ -654,7 +655,7 @@ footer .mail-icon:hover { color: #5b7fff; }
     h4, p { font-size: 14px; }
     .col-lg-4, .col-lg-8 { flex: 0 0 100%; max-width: 100%; }
     .photo-bg { min-height: 220px; }
-    .card { padding: 32px 40px 0px; }
+    .card { padding: 32px 40px 32px; }
 }
 
 @media (max-width: 991px) {

@@ -24,7 +24,7 @@
                     <a href="javascript:;" id="kaygb-mail-a" class="btn btn-success btn-last">全国流量卡</a>
                 </div>
 
-                <p><b>从前读过的书后来大部分都忘了，那读书有什么意义？</b> </p>
+                <p>从前读过的书后来大部分都忘了，那读书有什么意义？</p>
                 <p>当我还是个孩子的时候，我吃过很多食物，现在已经记不起吃过什么了。但可以肯定的是，它们中的一部分已经长成了我的骨头和血肉，读书对人的改变亦是如此。<br><br>你读过的书，经历的事，不一定都能记住，但会存在心里。等时间长了，那些细枝末节你都忘了，剩下来的就成了你的修养。它能让你说话有道理、做事有余地、出言有尺度、嬉闹有分寸。用生活所感去读书，用读书所得去生活。你的气质里，藏着你读过的书，走过的路和爱过的人。
                 </p>
 
@@ -89,25 +89,28 @@
             <div class="lightbox-info">
                 <p class="lb-line"><span id="lb-date"></span><span class="lb-sep">·</span><span id="lb-title"></span></p>
                 <p class="lb-copyright" id="lb-copyright"></p>
-                <p class="lb-counter" id="lb-counter"></p>
             </div>
         </div>
     </div>
 
     <!-- 右下角悬浮按钮：夜间模式 + 回到顶部（环形进度条） -->
-    <div class="float-actions">
-        <button id="night-toggle" type="button" class="float-btn" aria-label="夜间模式" title="夜间模式">🌙</button>
+    <div class="float-actions" id="float-actions">
+        <button id="night-toggle" type="button" class="float-btn" aria-label="夜间模式" title="夜间模式">
+            <svg class="icon-moon" viewBox="0 0 24 24" width="20" height="20" fill="currentColor" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+            <svg class="icon-sun" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none" aria-hidden="true"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+        </button>
         <button id="back-top" type="button" class="float-btn back-top" aria-label="回到顶部" title="回到顶部">
             <svg class="progress-ring" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
                 <circle class="ring-bg" cx="23" cy="23" r="20"></circle>
                 <circle class="ring-fg" cx="23" cy="23" r="20"></circle>
             </svg>
-            <span class="back-top-arrow">↑</span>
+            <svg class="back-top-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
         </button>
     </div>
 
     <script>
         // ============ 回到顶部（环形进度条） ============
+        var floatActions = document.getElementById('float-actions');
         var backTop = document.getElementById('back-top');
         var ringFg = backTop.querySelector('.ring-fg');
         var RING_R = 20;
@@ -120,9 +123,9 @@
             var max = document.documentElement.scrollHeight - window.innerHeight;
             var p = max > 0 ? Math.min(st / max, 1) : 0;
             ringFg.style.strokeDashoffset = RING_C * (1 - p);
-            // 首屏（滚动距离小于半屏）不显示回到顶部
-            if (st > (window.innerHeight * 0.5)) backTop.classList.add('show');
-            else backTop.classList.remove('show');
+            // 首屏（滚动距离小于半屏）两个悬浮图标都不显示
+            if (st > (window.innerHeight * 0.5)) floatActions.classList.add('show');
+            else floatActions.classList.remove('show');
         }
         window.addEventListener('scroll', updateScrollUI, { passive: true });
         window.addEventListener('resize', updateScrollUI);
@@ -132,11 +135,14 @@
 
         // ============ 夜间模式切换 ============
         var nightBtn = document.getElementById('night-toggle');
+        var iconMoon = nightBtn.querySelector('.icon-moon');
+        var iconSun = nightBtn.querySelector('.icon-sun');
         var NIGHT_KEY = 'iguanren_night';
 
         function applyNight(night) {
             document.documentElement.classList.toggle('night', night);
-            nightBtn.textContent = night ? '☀️' : '🌙';
+            iconMoon.style.display = night ? 'none' : '';
+            iconSun.style.display = night ? '' : 'none';
             try { localStorage.setItem(NIGHT_KEY, night ? '1' : '0'); } catch (e) {}
         }
         nightBtn.addEventListener('click', function() {
@@ -225,8 +231,6 @@
             document.getElementById('lb-date').textContent = item.dateLabel;
             document.getElementById('lb-title').textContent = item.title;
             document.getElementById('lb-copyright').textContent = item.copyright || '';
-            document.getElementById('lb-counter').textContent =
-                (lbIndex + 1) + ' / ' + WALLPAPERS.length;
         }
 
         function closeLightbox() {
