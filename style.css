@@ -422,7 +422,7 @@ footer p {
 }
 .float-btn:hover {
     background: rgba(60, 60, 70, 0.7);
-    transform: translateY(-2px);
+    transform: translateY(-2px) scale(1.06);
 }
 
 /* 回到顶部：环形进度 + 箭头图标 */
@@ -435,10 +435,24 @@ footer p {
 }
 .progress-ring circle { fill: none; stroke-width: 3; }
 .ring-bg { stroke: rgba(255, 255, 255, 0.2); }
-.ring-fg { stroke: #5b7fff; stroke-linecap: round; }
+.ring-fg { stroke: #5b7fff; stroke-linecap: round; transition: stroke 0.3s ease; }
+.back-top:hover .ring-fg { stroke: #7c9bff; }
 .back-top-icon {
     display: block;
     color: #fff;
+    animation: float-up 2s ease-in-out infinite;   /* 箭头常驻上下漂浮 */
+}
+@keyframes float-up {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-4px); }
+}
+
+/* 夜间模式：图标悬停旋转 */
+#night-toggle svg {
+    transition: transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+#night-toggle:hover svg {
+    transform: rotate(120deg) scale(1.1);
 }
 
 /* 移动端悬浮按钮小一点 */
