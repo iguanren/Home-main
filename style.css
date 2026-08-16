@@ -737,6 +737,9 @@ footer p {
     h1 { font-size: 24px; }
     p { font-size: 14px; }
     .card { padding: 32px 40px 32px; }
+    /* 平板/手机：图片与文字改为上下堆叠（原注释声明过但从未实现，导致并排挤压） */
+    .col-lg-4, .col-lg-8 { flex: 0 0 100%; max-width: 100%; }
+    .photo-bg { height: 260px; min-height: 0; }
 }
 
 @media (max-width: 767px) {
