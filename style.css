@@ -214,7 +214,11 @@ footer p {
     aspect-ratio: 16 / 9;
     object-fit: cover;
     background: #e8e8e8;
+    opacity: 0;                                   /* 加载前透明（灰块占位） */
+    transition: opacity 0.45s ease;
 }
+.wp-card img.loaded { opacity: 1; }               /* 加载完成淡入 */
+.wp-card img[src=""] { opacity: 1; }              /* 兜底：无图不闪 */
 .wp-card-meta { padding: 10px 12px 12px; }
 .wp-card-date {
     display: block;

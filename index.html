@@ -193,6 +193,14 @@
         var currentFilter = null;      // null=最近30天，'YYYY-MM'=某月归档
         var SHOW_RECENT = 30;          // 默认展示最近 30 天
 
+        // 按屏幕宽度选缩略图档位（省流量：手机端用更小图，必应 CDN 动态缩放）
+        function thumbFor(item) {
+            var w = window.innerWidth;
+            if (w < 480) return item.thumb + '&w=240&h=135';   // 小手机：省 59%
+            if (w < 768) return item.thumb + '&w=320&h=180';   // 大手机：省 35%
+            return item.thumb;                                  // 平板/桌面：原 400x240
+        }
+
         // 渲染卡片流（list 为空则用最近 30 天）
         function renderGallery(list) {
             var grid = document.getElementById('gallery-grid');
@@ -204,7 +212,7 @@
             grid.innerHTML = items.map(function(item, i) {
                 return '<a class="wp-card" href="javascript:;" data-index="' + i + '" title="' +
                     escapeHtml(item.title) + '">' +
-                    '<img src="' + item.thumb + '" alt="' + escapeHtml(item.title) +
+                    '<img src="' + thumbFor(item) + '" alt="' + escapeHtml(item.title) +
                     '" loading="lazy" decoding="async" referrerpolicy="no-referrer" />' +
                     '<div class="wp-card-meta">' +
                     '<span class="wp-card-date">' + item.dateLabel + '</span>' +
@@ -213,6 +221,16 @@
             }).join('');
             grid.querySelectorAll('.wp-card').forEach(function(card) {
                 card.addEventListener('click', function() { openLightbox(parseInt(card.dataset.index, 10)); });
+            });
+            // 图片淡入：加载完成后加 loaded 类（失败也定住灰块，避免透明闪烁）
+            grid.querySelectorAll('.wp-card img').forEach(function(img) {
+                var mark = function() { img.classList.add('loaded'); };
+                if (img.complete && img.naturalWidth > 0) {
+                    mark();
+                } else {
+                    img.addEventListener('load', mark);
+                    img.addEventListener('error', mark);
+                }
             });
             updateFilterBar();
         }
