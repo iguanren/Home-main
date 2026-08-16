@@ -1,8 +1,12 @@
 name: Update Bing Wallpaper Data
 
+# 每天抓 3 次（对标 wdbyte）：必应切图时间不固定，多时段兜底防漏抓
+# UTC 0:10 / 8:10 / 16:10 = 北京时间 8:10 / 16:10 / 次日 0:10
+# 另支持仓库页面手动触发（Actions → 本工作流 → Run workflow）
+
 on:
   schedule:
-    - cron: '10 16 * * *'
+    - cron: '10 0,8,16 * * *'
   workflow_dispatch:
 
 permissions:
@@ -12,12 +16,20 @@ jobs:
   update:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: pip install requests
-      - run: python scripts/fetch_bing.py
+
+      - name: Install requests
+        run: pip install requests
+
+      - name: Fetch bing wallpapers
+        run: python scripts/fetch_bing.py
+
       - name: Commit & push if changed
         run: |
           if git status --porcelain | grep -q 'data.json'; then
@@ -26,6 +38,7 @@ jobs:
             git add data.json
             git commit -m "chore: update bing wallpaper data $(date -u +%Y-%m-%d)"
             git push
+            echo "已推送更新"
           else
-            echo "No changes"
+            echo "数据无变化，跳过提交"
           fi
