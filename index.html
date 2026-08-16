@@ -194,11 +194,12 @@
         var SHOW_RECENT = 30;          // 默认展示最近 30 天
 
         // 按屏幕宽度选缩略图档位（省流量：手机端用更小图，必应 CDN 动态缩放）
+        // 注意：必须带 rs=1&c=4（裁剪模式），否则必应缩放会留白边（contain 模式）
         function thumbFor(item) {
             var w = window.innerWidth;
-            if (w < 480) return item.thumb + '&w=240&h=135';   // 小手机：省 59%
-            if (w < 768) return item.thumb + '&w=320&h=180';   // 大手机：省 35%
-            return item.thumb;                                  // 平板/桌面：原 400x240
+            if (w < 480) return item.thumb + '&w=240&h=135&rs=1&c=4';   // 小手机：省 59%
+            if (w < 768) return item.thumb + '&w=320&h=180&rs=1&c=4';   // 大手机：省 35%
+            return item.thumb;                                          // 平板/桌面：原 400x240
         }
 
         // 渲染卡片流（list 为空则用最近 30 天）
