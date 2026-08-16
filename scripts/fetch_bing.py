@@ -4,7 +4,7 @@
 iguanren.eu.org 壁纸数据生成脚本（B 方案：纯自抓，无第三方依赖）
 ===========================================================
 - 抓取必应官方 HPImageArchive（idx=0..7，最近 8 天）
-- 合并进 data.json，按日期去重，滚动保留最近 30 天
+- 合并进 data.json，按日期去重，**全量归档（永不删除，无限攒数据）**
 - 图片全部热链 cn.bing.com（缩略图 _400x240 / 4K _UHD），本站零图片存储
 - 由 GitHub Actions 每日定时执行
 
@@ -26,7 +26,6 @@ BING_API = "https://cn.bing.com/HPImageArchive.aspx"
 UA = ("Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 "
       "(KHTML, like Gecko) Chrome/126.0 Safari/537.36")
 MKT = "zh-CN"
-MAX_DAYS = 30          # 滚动窗口天数
 IDX_RANGE = range(0, 8)  # 每次抓最近 8 天（idx=0 今天 … idx=7 八天前）
 SLEEP = 0.5            # 请求间隔，避免频率限制
 
@@ -95,17 +94,15 @@ def main():
         print("本次抓取全部失败，保留原 data.json", file=sys.stderr)
         sys.exit(1)
 
-    # 合并：新抓的覆盖同日期旧记录，其余保留
+    # 合并：新抓的覆盖同日期旧记录，其余保留；全量归档，不裁剪
     old_items = load_existing()
     merged = {item["date"]: item for item in old_items}
     for item in fresh:
         merged[item["date"]] = item
     items = sorted(merged.values(), key=lambda x: x["date"], reverse=True)
-
-    # 裁剪：只保留最近 MAX_DAYS 天
-    kept = items[:MAX_DAYS]
+    kept = items
     today = datetime.now().strftime("%Y%m%d")
-    print(f"合并后 {len(items)} 条，裁剪保留 {len(kept)} 条（最近 {MAX_DAYS} 天）")
+    print(f"合并后 {len(items)} 条（全量归档，无限攒数据）")
     for it in kept[:8]:
         print(f"  {it['date']} | {it['title'][:30]} | {it['full']}")
 

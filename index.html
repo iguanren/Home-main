@@ -17,11 +17,12 @@
             <div class="col-lg-4 photo-bg"></div>
             <div class="col-lg-8 card">
                 <div class="row btn-row">
-                    <button id="kaygb-blog" type="button" class="btn btn-primary btn-first">官仁有话说</button>
-                    <a href="javascript:;" id="kaygb-blog-a" class="btn btn-primary btn-first">官仁有话说</a>
-                    <a href="javascript:;" class="btn btn-amber">香港云主机</a>
-                    <button id="kaygb-mail" type="button" class="btn btn-success btn-last">全国流量卡</button>
-                    <a href="javascript:;" id="kaygb-mail-a" class="btn btn-success btn-last">全国流量卡</a>
+                    <button id="kaygb-blog" type="button" class="btn btn-primary btn-first">昨日壁纸</button>
+                    <a href="javascript:;" id="kaygb-blog-a" class="btn btn-primary btn-first">昨日壁纸</a>
+                    <a href="javascript:;" id="btn-today-a" class="btn btn-amber">今日壁纸</a>
+                    <button id="btn-today" type="button" class="btn btn-amber">今日壁纸</button>
+                    <button id="kaygb-mail" type="button" class="btn btn-success btn-last">历史壁纸</button>
+                    <a href="javascript:;" id="kaygb-mail-a" class="btn btn-success btn-last">历史壁纸</a>
                 </div>
 
                 <p>从前读过的书后来大部分都忘了，那读书有什么意义？</p>
@@ -33,12 +34,29 @@
         </div>
     </div>
 
-    <!-- 卡片流：近 30 天壁纸（参照 wdbyte 风格，Grid 响应式） -->
+    <!-- 卡片流：壁纸展示区（默认最近 30 天，可切换月份归档） -->
     <section id="gallery" class="gallery-section">
+        <div class="filter-bar" id="filter-bar">
+            <span class="filter-text" id="filter-text"></span>
+            <button type="button" class="filter-home" id="filter-home">回到首页</button>
+        </div>
         <div id="gallery-grid" class="gallery-grid">
             <!-- 卡片由 JS 渲染 -->
         </div>
     </section>
+
+    <!-- 归档弹窗：历史壁纸 → 月份选择 -->
+    <div class="archive-mask" id="archive-mask">
+        <div class="archive-box">
+            <div class="archive-head">
+                <span>历史壁纸归档</span>
+                <button type="button" class="modal-close" id="archive-close" aria-label="关闭">✕</button>
+            </div>
+            <div class="archive-body" id="archive-months">
+                <!-- 月份由 JS 渲染 -->
+            </div>
+        </div>
+    </div>
 
     <!-- 网站底部版权 -->
     <footer class="site-footer">
@@ -172,13 +190,18 @@
         }
 
         // ============ 卡片流渲染 ============
-        function renderGallery() {
+        var currentFilter = null;      // null=最近30天，'YYYY-MM'=某月归档
+        var SHOW_RECENT = 30;          // 默认展示最近 30 天
+
+        // 渲染卡片流（list 为空则用最近 30 天）
+        function renderGallery(list) {
             var grid = document.getElementById('gallery-grid');
-            if (!WALLPAPERS.length) {
+            var items = list || WALLPAPERS.slice(0, SHOW_RECENT);
+            if (!items.length) {
                 grid.innerHTML = '<p class="gallery-empty">壁纸数据加载中，请稍候刷新...</p>';
                 return;
             }
-            grid.innerHTML = WALLPAPERS.map(function(item, i) {
+            grid.innerHTML = items.map(function(item, i) {
                 return '<a class="wp-card" href="javascript:;" data-index="' + i + '" title="' +
                     escapeHtml(item.title) + '">' +
                     '<img src="' + item.thumb + '" alt="' + escapeHtml(item.title) +
@@ -188,10 +211,71 @@
                     '<span class="wp-card-title">' + escapeHtml(item.title) + '</span>' +
                     '</div></a>';
             }).join('');
-            // 绑定点击 → 灯箱
             grid.querySelectorAll('.wp-card').forEach(function(card) {
                 card.addEventListener('click', function() { openLightbox(parseInt(card.dataset.index, 10)); });
             });
+            updateFilterBar();
+        }
+
+        // 提取全部有数据的月份，新→旧
+        function getMonths() {
+            var seen = {};
+            WALLPAPERS.forEach(function(it) { seen[it.date.slice(0, 6)] = true; });
+            return Object.keys(seen).sort().reverse();
+        }
+
+        // '202605' -> '26 年 5 月'
+        function fmtMonth(ym) {
+            return ym.slice(2, 4) + ' 年 ' + parseInt(ym.slice(4), 10) + ' 月';
+        }
+
+        // 筛选某月
+        function setMonthFilter(ym) {
+            currentFilter = ym;
+            var list = WALLPAPERS.filter(function(it) { return it.date.slice(0, 6) === ym; });
+            renderGallery(list);
+            closeArchive();
+        }
+
+        // 清除筛选，回到最近 30 天 + 滚回顶部
+        function goHome() {
+            currentFilter = null;
+            renderGallery();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // 筛选状态条
+        function updateFilterBar() {
+            var bar = document.getElementById('filter-bar');
+            var text = document.getElementById('filter-text');
+            if (currentFilter) {
+                var list = WALLPAPERS.filter(function(it) { return it.date.slice(0, 6) === currentFilter; });
+                text.textContent = fmtMonth(currentFilter) + '壁纸归档 · 共 ' + list.length + ' 张';
+                bar.classList.add('show');
+            } else {
+                bar.classList.remove('show');
+            }
+        }
+
+        // ============ 归档弹窗（历史壁纸 → 月份选择） ============
+        var archiveMask = document.getElementById('archive-mask');
+
+        function openArchive() {
+            var box = document.getElementById('archive-months');
+            var months = getMonths();
+            box.innerHTML = months.length ? months.map(function(m) {
+                return '<button type="button" class="archive-month" data-ym="' + m + '">' + fmtMonth(m) + '</button>';
+            }).join('') : '<p class="archive-empty">暂无归档数据</p>';
+            box.querySelectorAll('.archive-month').forEach(function(btn) {
+                btn.addEventListener('click', function() { setMonthFilter(btn.dataset.ym); });
+            });
+            archiveMask.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeArchive() {
+            archiveMask.classList.remove('show');
+            document.body.style.overflow = '';
         }
 
         function escapeHtml(s) {
@@ -205,9 +289,13 @@
         var lbImg = document.getElementById('lb-img');
         var lbLoading = document.getElementById('lb-loading');
         var lbIndex = 0;
+        var currentList = [];   // 当前展示的列表（灯箱基于它翻页）
 
         function openLightbox(index) {
-            if (!WALLPAPERS.length) return;
+            currentList = currentFilter
+                ? WALLPAPERS.filter(function(it) { return it.date.slice(0, 6) === currentFilter; })
+                : WALLPAPERS.slice(0, SHOW_RECENT);
+            if (!currentList.length) return;
             lbIndex = index;
             renderLightbox();
             lbModal.classList.add('show');
@@ -215,7 +303,7 @@
         }
 
         function renderLightbox() {
-            var item = WALLPAPERS[lbIndex];
+            var item = currentList[lbIndex];
             lbImg.style.opacity = '0';
             lbLoading.style.display = 'flex';
             lbImg.onload = function() {
@@ -239,7 +327,7 @@
         }
 
         function lightboxPrev() { if (lbIndex > 0) { lbIndex--; renderLightbox(); } }
-        function lightboxNext() { if (lbIndex < WALLPAPERS.length - 1) { lbIndex++; renderLightbox(); } }
+        function lightboxNext() { if (lbIndex < currentList.length - 1) { lbIndex++; renderLightbox(); } }
 
         lbModal.addEventListener('click', function(e) {
             if (e.target === lbModal) closeLightbox();          // 点背景关闭
@@ -251,18 +339,19 @@
         });
         document.getElementById('lb-close').addEventListener('click', closeLightbox);
 
-        // ============ 壁纸全屏弹窗（官仁有话说 → 当日图） ============
+        // ============ 壁纸全屏弹窗（昨日/今日壁纸） ============
         var wpModal = document.getElementById('wallpaper-modal');
         var wpImg = document.getElementById('wp-img');
         var wpLoading = document.getElementById('wallpaper-loading');
         var wpDownload = document.getElementById('wp-download');
         var wpStage = document.getElementById('wallpaper-stage');
 
-        function openWallpaper() {
+        function openWallpaper(item) {
             wpImg.style.display = 'none';
             wpImg.classList.remove('loaded');
             wpStage.classList.remove('show');
             wpLoading.style.display = 'flex';
+            wpLoading.innerHTML = '<div class="wp-spin"></div><p>正在加载必应壁纸...</p>';
             wpModal.classList.add('show');
             document.body.style.overflow = 'hidden';
 
@@ -279,11 +368,36 @@
                 wpDownload.href = url;
             }
 
-            if (WALLPAPERS.length) {
-                showUrl(WALLPAPERS[0].full); // 今日图 4K 热链，零请求
+            if (item && item.full) {
+                showUrl(item.full);
             } else {
-                wpLoading.innerHTML = '<p style="color:#fff">数据加载失败，请刷新</p>';
+                wpLoading.innerHTML = '<p style="color:#fff">暂无该日壁纸数据，请稍后再试</p>';
             }
+        }
+
+        // 按日期找壁纸条目（YYYYMMDD）
+        function findItemByDate(ymd) {
+            for (var i = 0; i < WALLPAPERS.length; i++) {
+                if (WALLPAPERS[i].date === ymd) return WALLPAPERS[i];
+            }
+            return null;
+        }
+
+        // 昨天日期（YYYYMMDD）
+        function yesterdayStr(today) {
+            var d = new Date(today.slice(0, 4), parseInt(today.slice(4, 6), 10) - 1, parseInt(today.slice(6), 10));
+            d.setDate(d.getDate() - 1);
+            var mm = ('0' + (d.getMonth() + 1)).slice(-2);
+            var dd = ('0' + d.getDate()).slice(-2);
+            return d.getFullYear() + mm + dd;
+        }
+
+        function openYesterday() {
+            openWallpaper(findItemByDate(yesterdayStr(todayStr)));
+        }
+
+        function openToday() {
+            openWallpaper(findItemByDate(todayStr));
         }
 
         function closeWallpaper() {
@@ -314,7 +428,22 @@
         }
 
         // ============ 事件绑定 ============
-        // 三个按钮（官仁有话说/香港云主机/全国流量卡）均为占位，待后续项目接入
+        // 昨日壁纸 / 今日壁纸 / 历史壁纸
+        document.getElementById('kaygb-blog').addEventListener('click', openYesterday);
+        document.getElementById('kaygb-blog-a').addEventListener('click', function(e) { e.preventDefault(); openYesterday(); });
+        document.getElementById('btn-today').addEventListener('click', openToday);
+        document.getElementById('btn-today-a').addEventListener('click', function(e) { e.preventDefault(); openToday(); });
+        document.getElementById('kaygb-mail').addEventListener('click', openArchive);
+        document.getElementById('kaygb-mail-a').addEventListener('click', function(e) { e.preventDefault(); openArchive(); });
+
+        // 归档弹窗：关闭
+        document.getElementById('archive-close').addEventListener('click', closeArchive);
+        archiveMask.addEventListener('click', function(e) { if (e.target === archiveMask) closeArchive(); });
+
+        // 筛选状态条：回到首页
+        document.getElementById('filter-home').addEventListener('click', goHome);
+
+        // 通用弹窗（保留未用）
         document.getElementById('modal-close').addEventListener('click', closeModal);
         mask.addEventListener('click', function(e) { if (e.target === mask) closeModal(); });
         wpModal.addEventListener('click', function(e) {
@@ -323,13 +452,15 @@
 
         // 键盘：Esc 关所有弹窗；← → 翻灯箱
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') { closeModal(); closeWallpaper(); closeLightbox(); }
+            if (e.key === 'Escape') { closeModal(); closeWallpaper(); closeLightbox(); closeArchive(); }
             else if (e.key === 'ArrowLeft' && lbModal.classList.contains('show')) lightboxPrev();
             else if (e.key === 'ArrowRight' && lbModal.classList.contains('show')) lightboxNext();
         });
 
         // ============ 初始化 ============
+        var todayStr = '';
         loadData().then(function(d) {
+            todayStr = d.today || '';
             if (d && d.items && d.items.length) {
                 applyBg(d.items[0].full);   // 背景 = 今日 4K
             }
