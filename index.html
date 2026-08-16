@@ -3,15 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <title>官仁有话说 · 读书分享与每日壁纸</title>
-    <meta name="description" content="官仁有话说——读书感悟、必应每日壁纸、香港云服务器与高防主机推荐、全国流量卡办理。用生活所感去读书，用读书所得去生活。">
-    <meta name="keywords" content="官仁有话说,读书,读书意义,读书感悟,必应壁纸,每日壁纸,高清壁纸,香港空间,高防主机,虚拟主机,云服务器,流量卡,全国流量卡,视频解析">
+    <title>官仁有话说 · 必应每日壁纸 4K 高清下载</title>
+    <meta name="description" content="官仁有话说——每日更新必应官方壁纸，4K 超清无水印免费下载，支持历史壁纸按月归档浏览，可查看昨日、今日及过往全部必应美图。">
+    <meta name="keywords" content="必应壁纸,必应每日壁纸,每日壁纸,必应美图,4K壁纸,高清壁纸,壁纸下载,无水印壁纸,壁纸归档,官仁有话说">
+    <link rel="canonical" href="https://iguanren.eu.org/" />
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "官仁有话说 · 必应每日壁纸",
+        "url": "https://iguanren.eu.org/",
+        "description": "每日更新必应官方壁纸，4K 超清无水印免费下载，支持历史壁纸按月归档浏览。"
+    }
+    </script>
     <link rel="shortcut icon" href="/favicon.svg" />
     <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
-    <!-- 第一屏：Hero 读书卡片（背景为今日必应壁纸热链） -->
+    <!-- 隐藏 H1：面向搜索引擎，视觉不可见 -->
+    <h1 class="sr-only">必应每日壁纸 - 4K 高清壁纸免费下载与历史归档</h1>
+
+    <!-- 第一屏：Hero 卡片（背景为今日必应壁纸热链） -->
     <div id="main" class="container">
         <div class="row my-card justify-content-center">
             <div class="col-lg-4 photo-bg"></div>
@@ -63,20 +76,7 @@
         <p>© 2018 本站已运行 <a id="days" rel="nofollow">0</a> 天</p>
     </footer>
 
-    <!-- 通用弹窗（用于流量卡） -->
-    <div class="modal-mask" id="modal-mask">
-        <div class="modal-box" id="modal-box">
-            <div class="modal-head">
-                <span id="modal-title">全国流量卡</span>
-                <button type="button" class="modal-close" id="modal-close" aria-label="关闭">✕</button>
-            </div>
-            <div class="modal-body">
-                <iframe id="modal-frame" title="弹窗内容"></iframe>
-            </div>
-        </div>
-    </div>
-
-    <!-- 壁纸全屏弹窗（官仁有话说 → 当日壁纸） -->
+    <!-- 壁纸全屏弹窗（昨日/今日壁纸） -->
     <div class="wallpaper-modal" id="wallpaper-modal">
         <div class="wallpaper-loading" id="wallpaper-loading">
             <div class="wp-spin"></div>
@@ -406,27 +406,6 @@
             document.body.style.overflow = '';
         }
 
-        // ============ 通用弹窗（流量卡） ============
-        var mask = document.getElementById('modal-mask');
-        var frame = document.getElementById('modal-frame');
-
-        function openModal(title, content, mini) {
-            document.getElementById('modal-title').textContent = title;
-            document.getElementById('modal-box').classList.toggle('mini', !!mini);
-            frame.classList.remove('loaded');
-            frame.src = content;
-            frame.onload = function() { frame.classList.add('loaded'); };
-            mask.classList.add('show');
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            mask.classList.remove('show');
-            frame.src = 'about:blank';
-            frame.classList.remove('loaded');
-            document.body.style.overflow = '';
-        }
-
         // ============ 事件绑定 ============
         // 昨日壁纸 / 今日壁纸 / 历史壁纸
         document.getElementById('kaygb-blog').addEventListener('click', openYesterday);
@@ -443,16 +422,13 @@
         // 筛选状态条：回到首页
         document.getElementById('filter-home').addEventListener('click', goHome);
 
-        // 通用弹窗（保留未用）
-        document.getElementById('modal-close').addEventListener('click', closeModal);
-        mask.addEventListener('click', function(e) { if (e.target === mask) closeModal(); });
         wpModal.addEventListener('click', function(e) {
             if (e.target === wpModal || e.target === wpImg) closeWallpaper();
         });
 
         // 键盘：Esc 关所有弹窗；← → 翻灯箱
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape') { closeModal(); closeWallpaper(); closeLightbox(); closeArchive(); }
+            if (e.key === 'Escape') { closeWallpaper(); closeLightbox(); closeArchive(); }
             else if (e.key === 'ArrowLeft' && lbModal.classList.contains('show')) lightboxPrev();
             else if (e.key === 'ArrowRight' && lbModal.classList.contains('show')) lightboxNext();
         });

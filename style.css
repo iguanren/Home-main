@@ -6,6 +6,19 @@
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+/* 视觉隐藏但爬虫可读（SEO 用） */
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border: 0;
+}
+
 body {
     font-size: 18px;
     color: #6c767d;
@@ -57,7 +70,6 @@ body {
 .col-lg-8 { flex: 0 0 60%; max-width: 60%; }
 /* 工具类（Bootstrap 移除后补齐） */
 .justify-content-center { justify-content: center; }
-.mt-4 { margin-top: 1.5rem; }
 
 .my-card {
     width: 100%;
@@ -66,7 +78,7 @@ body {
     backdrop-filter: blur(24px) saturate(180%);
     -webkit-backdrop-filter: blur(24px) saturate(180%);
     border: 1px solid rgba(255, 255, 255, 0.4);
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.6);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.22), 0 4px 16px rgba(0, 0, 0, 0.1), inset 0 1px 0 rgba(255, 255, 255, 0.6);
     border-radius: 24px;
     overflow: hidden;
 }
@@ -81,10 +93,11 @@ body {
     box-shadow: none;
 }
 
-/* 正文排版：段落间距 + 行距 */
+/* 正文排版：段落间距 + 行距 + 首行缩进两字（书本样式） */
 .card p {
     margin: 0 0 16px;
     line-height: 1.9;
+    text-indent: 2em;
 }
 .card p:last-child { margin-bottom: 0; }
 
@@ -93,9 +106,6 @@ body {
     margin-bottom: 28px;
 }
 
-h1 { font-size: 36px; margin-bottom: .5em; color: #000; }
-h4 { font-size: 16px; color: #000; }
-h1, h4 { line-height: 1.4; }
 
 .photo-bg {
     background-color: transparent;
@@ -153,16 +163,6 @@ footer p {
     gap: 10px;
     color: rgba(0, 0, 0, 0.7);
 }
-footer .mail-icon {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 16px;
-    color: rgba(0, 0, 0, 0.6);
-    text-decoration: none;
-    transition: color 0.2s;
-}
-footer .mail-icon:hover { color: #5b7fff; }
 
 /* 网站底部版权区（独立于卡片） */
 .site-footer {
@@ -306,6 +306,22 @@ footer .mail-icon:hover { color: #5b7fff; }
 }
 :root.night .archive-head { color: #eee; border-bottom-color: rgba(255, 255, 255, 0.1); }
 
+/* 归档弹窗关闭按钮 */
+.archive-head .modal-close {
+    border: none;
+    background: none;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    color: #666;
+    padding: 0 8px;
+    opacity: 0.7;
+    transition: opacity 0.2s, color 0.2s;
+}
+.archive-head .modal-close:hover { opacity: 1; color: #000; }
+:root.night .archive-head .modal-close { color: #aaa; }
+:root.night .archive-head .modal-close:hover { color: #fff; }
+
 .archive-body {
     padding: 16px;
     display: flex;
@@ -332,7 +348,7 @@ footer .mail-icon:hover { color: #5b7fff; }
 }
 .archive-empty { width: 100%; text-align: center; color: #999; padding: 24px 0; font-size: 14px; }
 
-/* 平板/手机：三按钮横排（等宽分段，不竖堆） */
+/* 平板/手机：三按钮横排，独立圆角、留间距 */
 @media (max-width: 991px) {
     .gallery-grid { grid-template-columns: repeat(2, 1fr); gap: 14px; }
     .btn-row {
@@ -343,17 +359,19 @@ footer .mail-icon:hover { color: #5b7fff; }
         flex: 1 1 0;
         width: auto;
         max-width: none;
-        margin: 5px 2px;
+        margin: 5px 4px;           /* 按钮之间留间距，不挨着 */
         padding: 10px 8px;
         font-size: 14px;
+        border-radius: 12px;       /* 每个按钮独立圆角 */
     }
-    .btn-row > .btn.btn-first {
-        border-radius: 12px 0 0 12px;
-        margin-left: 0;
-    }
+    .btn-row > .btn:first-child { margin-left: 0; }
+    .btn-row > .btn:last-child { margin-right: 0; }
+    /* 覆盖桌面分段式圆角 */
+    .btn-row > .btn.btn-first,
     .btn-row > .btn.btn-last {
-        border-radius: 0 12px 12px 0;
-        margin-right: 0;
+        border-radius: 12px;
+        margin-left: 4px;
+        margin-right: 4px;
     }
 }
 @media (max-width: 767px) {
@@ -438,11 +456,11 @@ footer .mail-icon:hover { color: #5b7fff; }
     color: #aeb4bb;
 }
 :root.night #main { background-color: #141418; }
-:root.night h1, :root.night h4 { color: #eee; }
 
 :root.night .my-card {
     background: rgba(24, 24, 30, 0.82);
     border-color: rgba(255, 255, 255, 0.1);
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.6), 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 :root.night .btn {
@@ -467,8 +485,7 @@ footer .mail-icon:hover { color: #5b7fff; }
 }
 
 :root.night footer p { color: rgba(255, 255, 255, 0.6); }
-:root.night footer .mail-icon { color: rgba(255, 255, 255, 0.55); }
-
+:root.night 
 :root.night .gallery-section {
     background: rgba(20, 20, 26, 0.88);
     border-top-color: rgba(255, 255, 255, 0.08);
@@ -490,77 +507,9 @@ footer .mail-icon:hover { color: #5b7fff; }
 /* ============================================================
    通用弹窗（流量卡 iframe）
    ============================================================ */
-.modal-mask {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.6);
-    z-index: 9999;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    backdrop-filter: blur(4px);
-}
-.modal-mask.show { display: flex; }
-
-.modal-box {
-    position: relative;
-    width: 90%;
-    height: 90%;
-    max-width: 1400px;
-    background: transparent;
-    display: flex;
-    flex-direction: column;
-    overflow: hidden;
-    border-radius: 12px;
-}
-.modal-box.mini { width: 90%; height: 90%; }
-
-.modal-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 14px 24px;
-    background: rgba(255, 255, 255, 0.92);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-    font-size: 16px;
-    font-weight: 600;
-    color: #333;
-    border-radius: 12px 12px 0 0;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
-}
-.modal-close {
-    border: none;
-    background: none;
-    font-size: 22px;
-    line-height: 1;
-    cursor: pointer;
-    color: #666;
-    padding: 0 8px;
-    opacity: 0.7;
-    transition: opacity 0.2s, color 0.2s;
-}
-.modal-close:hover { opacity: 1; color: #000; }
-
-.modal-body {
-    flex: 1;
-    position: relative;
-    background: transparent;
-    border-radius: 0 0 12px 12px;
-    overflow: hidden;
-}
-.modal-body iframe {
-    width: 100%;
-    height: 100%;
-    border: none;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-.modal-body iframe.loaded { opacity: 1; }
 
 /* ============================================================
-   壁纸全屏弹窗（官仁有话说 → 当日图）
+   壁纸全屏弹窗（昨日/今日壁纸 → 全屏铺满）
    ============================================================ */
 .wallpaper-modal {
     position: fixed;
@@ -568,39 +517,39 @@ footer .mail-icon:hover { color: #5b7fff; }
     background: #000;
     z-index: 10000;
     display: none;
-    align-items: center;
-    justify-content: center;
     cursor: pointer;
 }
 .wallpaper-modal.show {
-    display: flex;
+    display: block;
     animation: wp-mask-in 0.3s ease both;
 }
 @keyframes wp-mask-in { from { opacity: 0; } to { opacity: 1; } }
 
 .wallpaper-modal img {
-    max-width: 92vw;
-    max-height: 92vh;
-    border-radius: 8px;
-    box-shadow: none;
-    opacity: 0;
-    transition: opacity 0.45s ease, transform 0.45s cubic-bezier(0.22, 0.8, 0.3, 1);
-    transform: scale(0.96);
+    width: 100%;
+    height: 100%;
+    object-fit: cover;   /* 全屏铺满（对标灯箱） */
     cursor: default;
+    opacity: 0;
+    transition: opacity 0.45s ease;
 }
 .wallpaper-modal img.loaded {
     opacity: 1;
-    transform: scale(1);
 }
 
 .wallpaper-stage {
     position: relative;
+    width: 100%;
+    height: 100%;
     display: none;
 }
-.wallpaper-stage.show { display: inline-flex; }
+.wallpaper-stage.show { display: block; }
 
 .wallpaper-loading {
     position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -771,7 +720,7 @@ footer .mail-icon:hover { color: #5b7fff; }
 @media (max-width: 1199px) {
     body { min-height: 600px; }
     h1 { font-size: 24px; }
-    h4, p { font-size: 14px; }
+    p { font-size: 14px; }
     .col-lg-4, .col-lg-8 { flex: 0 0 100%; max-width: 100%; }
     .photo-bg { min-height: 220px; }
     .card { padding: 32px 40px 32px; }
@@ -796,6 +745,7 @@ footer .mail-icon:hover { color: #5b7fff; }
         box-shadow: none;
         border-left: none;
         border-right: none;
+        background: rgba(255, 255, 255, 0.95);   /* 白天模式手机端文字区更亮 */
     }
     .photo-bg { height: 180px; }
     .card { padding: 20px; }

@@ -7,10 +7,12 @@ iguanren.eu.org 主站源码：读书分享 + 必应每日壁纸（近 30 天卡
 ## 文件结构
 
 ```
-├── index.html              # 主页（读书卡 + 壁纸卡片流 + 灯箱 + 归档）
+├── index.html              # 主页（壁纸卡片流 + 灯箱 + 归档 + 悬浮功能）
 ├── style.css               # 全手写样式，无任何前端框架依赖
 ├── data.json               # 壁纸数据（Actions 每日自动更新，全量归档）
 ├── favicon.svg
+├── sitemap.xml             # 站点地图（提交搜索引擎收录）
+├── robots.txt              # 爬虫规则（指向 sitemap）
 ├── scripts/fetch_bing.py   # 抓取脚本：必应 HPImageArchive idx=0..7 → data.json
 └── .github/workflows/update.yml  # 每天北京时间 0:10 自动抓取并推送
 ```
