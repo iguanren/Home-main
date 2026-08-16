@@ -119,8 +119,8 @@
         </button>
         <button id="back-top" type="button" class="float-btn back-top" aria-label="回到顶部" title="回到顶部">
             <svg class="progress-ring" width="46" height="46" viewBox="0 0 46 46" aria-hidden="true">
-                <circle class="ring-bg" cx="23" cy="23" r="20"></circle>
-                <circle class="ring-fg" cx="23" cy="23" r="20"></circle>
+                <circle class="ring-bg" cx="23" cy="23" r="21.5"></circle>
+                <circle class="ring-fg" cx="23" cy="23" r="21.5"></circle>
             </svg>
             <svg class="back-top-icon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polyline points="18 15 12 9 6 15"/></svg>
         </button>
@@ -131,8 +131,8 @@
         var floatActions = document.getElementById('float-actions');
         var backTop = document.getElementById('back-top');
         var ringFg = backTop.querySelector('.ring-fg');
-        var RING_R = 20;
-        var RING_C = 2 * Math.PI * RING_R;   // 圆周长 ≈ 125.66
+        var RING_R = ringFg.r.baseVal.value;   // 半径从 SVG 读取（r=21.5），与 HTML/CSS 保持一致
+        var RING_C = 2 * Math.PI * RING_R;   // 圆周长 ≈ 135.09
         ringFg.style.strokeDasharray = RING_C;
         ringFg.style.strokeDashoffset = RING_C;
 

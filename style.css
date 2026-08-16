@@ -429,8 +429,10 @@ footer p {
 .back-top { position: relative; }
 .progress-ring {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: -1px;
+    left: -1px;
+    width: calc(100% + 2px);   /* 外扩 1px 盖住按钮边框，环外缘=按钮外缘，零缝隙 */
+    height: calc(100% + 2px);
     transform: rotate(-90deg);
 }
 .progress-ring circle { fill: none; stroke-width: 3; }
@@ -734,16 +736,7 @@ footer p {
     body { min-height: 600px; }
     h1 { font-size: 24px; }
     p { font-size: 14px; }
-    .col-lg-4, .col-lg-8 { flex: 0 0 100%; max-width: 100%; }
-    .photo-bg { min-height: 220px; }
     .card { padding: 32px 40px 32px; }
-}
-
-@media (max-width: 991px) {
-    .photo-bg {
-        background-position: top;
-        min-height: 200px;
-    }
 }
 
 @media (max-width: 767px) {
