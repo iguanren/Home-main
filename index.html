@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>官仁有话说 · 读书分享与每日壁纸</title>
+    <meta name="description" content="官仁有话说——读书感悟、必应每日壁纸、香港云服务器与高防主机推荐、全国流量卡办理。用生活所感去读书，用读书所得去生活。">
+    <meta name="keywords" content="官仁有话说,读书,读书意义,读书感悟,必应壁纸,每日壁纸,高清壁纸,香港空间,高防主机,虚拟主机,云服务器,流量卡,全国流量卡,视频解析">
+    <link rel="shortcut icon" href="/favicon.svg" />
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <!-- 第一屏：Hero 读书卡片（背景为今日必应壁纸热链） -->
+    <div id="main" class="container">
+        <div class="row my-card justify-content-center">
+            <div class="col-lg-4 photo-bg"></div>
+            <div class="col-lg-8 card">
+                <h1>读书的意义是什么？</h1>
+                <p><b>从前读过的书后来大部分都忘了，那读书有什么意义？</b> </p>
+                <p>当我还是个孩子的时候，我吃过很多食物，现在已经记不起吃过什么了。但可以肯定的是，它们中的一部分已经长成了我的骨头和血肉，读书对人的改变亦是如此。<br><br>你读过的书，经历的事，不一定都能记住，但会存在心里。等时间长了，那些细枝末节你都忘了，剩下来的就成了你的修养。它能让你说话有道理、做事有余地、出言有尺度、嬉闹有分寸。用生活所感去读书，用读书所得去生活。你的气质里，藏着你读过的书，走过的路和爱过的人。
+                </p>
+
+                <p>SO：你的言谈举止都是你读书沉淀下来的，不知不觉就会改变你的整个人生</p>
+                <div class="row btn-row">
+                    <button id="kaygb-blog" type="button" class="btn btn-primary btn-first">官仁有话说</button>
+                    <a href="#gallery" id="kaygb-blog-a" class="btn btn-primary btn-first">官仁有话说</a>
+                    <a href="https://new.hkyun.vip" target="_blank" class="btn btn-amber">香港云主机</a>
+                    <a href="https://ym.ksjhaoka.com/?s=TFsJvnGF5929" target="_blank" id="kaygb-mail-a" class="btn btn-success btn-last">全国流量卡</a>
+                    <button id="kaygb-mail" type="button" class="btn btn-success btn-last">全国流量卡</button>
+                </div>
+
+                <h4 class="mt-4">读书和赚钱是人生最好的修行，前者让人不惑，后者让人有尊严，SO···加油吧！</h4>
+                <footer>
+                    <p>© 2018 本站已运行 <a id="days" rel="nofollow">0</a> 天
+                        <a href="mailto:458091312@qq.com" title="458091312@qq.com" class="mail-icon"><svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 512 512" fill="currentColor" aria-hidden="true"><path d="M464 64H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V112c0-26.51-21.49-48-48-48zm0 48v10.816c-8.014 5.136-18.633 11.392-28.83 17.944C402.45 162.64 346.1 199.02 323.18 214.21c-24.39 16.33-37.345 25.488-67.18 25.488-29.851 0-42.802-9.16-67.2-25.5-22.918-15.188-79.256-51.56-112.006-80.367C46.614 130.207 36.001 123.95 28 118.816V112c0-8.837 7.163-16 16-16h416c8.837 0 16 7.163 16 16zM48 432v-157.07c8.759 5.505 17.737 10.912 26.878 16.547 29.443 18.14 71.088 44.827 101.36 65.478 22.664 15.478 39.153 20.297 79.762 20.297 40.575 0 57.066-4.806 79.76-20.297 30.26-20.651 71.905-47.338 101.36-65.478 9.14-5.634 18.118-11.042 26.878-16.547V432c0 8.837-7.163 16-16 16H64c-8.837 0-16-7.163-16-16z"/></svg></a>
+                    </p>
+                </footer>
+            </div>
+        </div>
+    </div>
+
+    <!-- 卡片流：近 30 天壁纸（参照 wdbyte 风格，Grid 响应式） -->
+    <section id="gallery" class="gallery-section">
+        <div class="gallery-head">
+            <h2>每日壁纸</h2>
+            <p id="gallery-sub">必应官方 · 每日更新 · 近 30 天</p>
+        </div>
+        <div id="gallery-grid" class="gallery-grid">
+            <!-- 卡片由 JS 渲染 -->
+        </div>
+    </section>
+
+    <!-- 通用弹窗（用于流量卡） -->
+    <div class="modal-mask" id="modal-mask">
+        <div class="modal-box" id="modal-box">
+            <div class="modal-head">
+                <span id="modal-title">全国流量卡</span>
+                <button type="button" class="modal-close" id="modal-close" aria-label="关闭">✕</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="modal-frame" title="弹窗内容"></iframe>
+            </div>
+        </div>
+    </div>
+
+    <!-- 壁纸全屏弹窗（官仁有话说 → 当日壁纸） -->
+    <div class="wallpaper-modal" id="wallpaper-modal">
+        <div class="wallpaper-loading" id="wallpaper-loading">
+            <div class="wp-spin"></div>
+            <p>正在加载必应今日壁纸...</p>
+        </div>
+        <div class="wallpaper-stage" id="wallpaper-stage">
+            <div class="wallpaper-toolbar">
+                <a id="wp-download" href="#" download="bing-wallpaper.jpg" target="_blank">⬇ 下载原图</a>
+            </div>
+            <img id="wp-img" alt="必应壁纸" />
+        </div>
+    </div>
+
+    <!-- 灯箱：点击卡片放大（4K 大图 + 右上角下载 + 图下信息居中） -->
+    <div class="lightbox" id="lightbox">
+        <div class="lightbox-stage">
+            <div class="lightbox-toolbar">
+                <a id="lb-download" href="#" download="bing-wallpaper.jpg" target="_blank">⬇ 下载原图</a>
+                <button id="lb-close" type="button" aria-label="关闭">✕</button>
+            </div>
+            <div class="lightbox-img-wrap" id="lb-img-wrap">
+                <div class="lightbox-loading" id="lb-loading">
+                    <div class="wp-spin"></div>
+                    <p>正在加载 4K 原图...</p>
+                </div>
+                <img id="lb-img" alt="必应壁纸" />
+            </div>
+            <div class="lightbox-info">
+                <p class="lb-date" id="lb-date"></p>
+                <h3 class="lb-title" id="lb-title"></h3>
+                <p class="lb-copyright" id="lb-copyright"></p>
+                <p class="lb-counter" id="lb-counter"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ============ 数据加载：data.json（Actions 每日生成） ============
+        var WALLPAPERS = [];   // 全部壁纸条目（按日期倒序，新在前）
+
+        function loadData() {
+            return fetch('data.json', { cache: 'no-cache' })
+                .then(function(r) { if (!r.ok) throw new Error('data.json ' + r.status); return r.json(); })
+                .then(function(d) { WALLPAPERS = d.items || []; return d; })
+                .catch(function(e) { console.error('加载壁纸数据失败:', e); });
+        }
+
+        // ============ 背景：今日 4K 热链 ============
+        function applyBg(url) {
+            document.body.style.background = 'url(' + url + ') center/cover no-repeat fixed';
+            var photo = document.querySelector('.photo-bg');
+            if (photo) photo.style.background = 'url(' + url + ') center/cover no-repeat';
+        }
+
+        // ============ 卡片流渲染 ============
+        function renderGallery() {
+            var grid = document.getElementById('gallery-grid');
+            if (!WALLPAPERS.length) {
+                grid.innerHTML = '<p class="gallery-empty">壁纸数据加载中，请稍候刷新...</p>';
+                return;
+            }
+            document.getElementById('gallery-sub').textContent =
+                '必应官方 · 每日更新 · 共 ' + WALLPAPERS.length + ' 张';
+            grid.innerHTML = WALLPAPERS.map(function(item, i) {
+                return '<a class="wp-card" href="javascript:;" data-index="' + i + '" title="' +
+                    escapeHtml(item.title) + '">' +
+                    '<img src="' + item.thumb + '" alt="' + escapeHtml(item.title) +
+                    '" loading="lazy" decoding="async" referrerpolicy="no-referrer" />' +
+                    '<div class="wp-card-meta">' +
+                    '<span class="wp-card-date">' + item.dateLabel + '</span>' +
+                    '<span class="wp-card-title">' + escapeHtml(item.title) + '</span>' +
+                    '</div></a>';
+            }).join('');
+            // 绑定点击 → 灯箱
+            grid.querySelectorAll('.wp-card').forEach(function(card) {
+                card.addEventListener('click', function() { openLightbox(parseInt(card.dataset.index, 10)); });
+            });
+        }
+
+        function escapeHtml(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+        }
+
+        // ============ 灯箱 ============
+        var lbModal = document.getElementById('lightbox');
+        var lbImg = document.getElementById('lb-img');
+        var lbLoading = document.getElementById('lb-loading');
+        var lbIndex = 0;
+
+        function openLightbox(index) {
+            if (!WALLPAPERS.length) return;
+            lbIndex = index;
+            renderLightbox();
+            lbModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function renderLightbox() {
+            var item = WALLPAPERS[lbIndex];
+            lbImg.style.opacity = '0';
+            lbLoading.style.display = 'flex';
+            lbImg.onload = function() {
+                lbImg.style.opacity = '1';
+                lbLoading.style.display = 'none';
+            };
+            lbImg.onerror = function() {
+                lbLoading.innerHTML = '<p>图片加载失败，请检查网络后重试</p>';
+            };
+            lbImg.src = item.full;
+            lbImg.alt = item.title;
+            document.getElementById('lb-download').href = item.full;
+            document.getElementById('lb-date').textContent = item.dateLabel;
+            document.getElementById('lb-title').textContent = item.title;
+            document.getElementById('lb-copyright').textContent = item.copyright || '';
+            document.getElementById('lb-counter').textContent =
+                (lbIndex + 1) + ' / ' + WALLPAPERS.length;
+        }
+
+        function closeLightbox() {
+            lbModal.classList.remove('show');
+            document.body.style.overflow = '';
+        }
+
+        function lightboxPrev() { if (lbIndex > 0) { lbIndex--; renderLightbox(); } }
+        function lightboxNext() { if (lbIndex < WALLPAPERS.length - 1) { lbIndex++; renderLightbox(); } }
+
+        lbModal.addEventListener('click', function(e) {
+            if (e.target === lbModal) closeLightbox();          // 点背景关闭
+            else if (e.target === lbImg) {
+                // 点击图片左半区← 右半区→
+                var r = lbImg.getBoundingClientRect();
+                if (e.clientX < r.left + r.width / 2) lightboxPrev(); else lightboxNext();
+            }
+        });
+        document.getElementById('lb-close').addEventListener('click', closeLightbox);
+
+        // ============ 壁纸全屏弹窗（官仁有话说 → 当日图） ============
+        var wpModal = document.getElementById('wallpaper-modal');
+        var wpImg = document.getElementById('wp-img');
+        var wpLoading = document.getElementById('wallpaper-loading');
+        var wpDownload = document.getElementById('wp-download');
+        var wpStage = document.getElementById('wallpaper-stage');
+
+        function openWallpaper() {
+            wpImg.style.display = 'none';
+            wpImg.classList.remove('loaded');
+            wpStage.classList.remove('show');
+            wpLoading.style.display = 'flex';
+            wpModal.classList.add('show');
+            document.body.style.overflow = 'hidden';
+
+            function showUrl(url) {
+                wpImg.onload = function() {
+                    wpLoading.style.display = 'none';
+                    wpImg.style.display = 'block';
+                    requestAnimationFrame(function() {
+                        wpImg.classList.add('loaded');
+                        wpStage.classList.add('show');
+                    });
+                };
+                wpImg.src = url;
+                wpDownload.href = url;
+            }
+
+            if (WALLPAPERS.length) {
+                showUrl(WALLPAPERS[0].full); // 今日图 4K 热链，零请求
+            } else {
+                wpLoading.innerHTML = '<p style="color:#fff">数据加载失败，请刷新</p>';
+            }
+        }
+
+        function closeWallpaper() {
+            wpModal.classList.remove('show');
+            wpImg.style.display = 'none';
+            document.body.style.overflow = '';
+        }
+
+        // ============ 通用弹窗（流量卡） ============
+        var mask = document.getElementById('modal-mask');
+        var frame = document.getElementById('modal-frame');
+
+        function openModal(title, content, mini) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-box').classList.toggle('mini', !!mini);
+            frame.classList.remove('loaded');
+            frame.src = content;
+            frame.onload = function() { frame.classList.add('loaded'); };
+            mask.classList.add('show');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            mask.classList.remove('show');
+            frame.src = 'about:blank';
+            frame.classList.remove('loaded');
+            document.body.style.overflow = '';
+        }
+
+        // ============ 事件绑定 ============
+        document.getElementById('kaygb-blog').addEventListener('click', openWallpaper);
+        document.getElementById('kaygb-blog-a').addEventListener('click', function(e) {
+            e.preventDefault();
+            openWallpaper();
+        });
+        document.getElementById('kaygb-mail').addEventListener('click', function() {
+            openModal('全国流量卡', 'https://ym.ksjhaoka.com/?s=TFsJvnGF5929', true);
+        });
+        document.getElementById('modal-close').addEventListener('click', closeModal);
+        mask.addEventListener('click', function(e) { if (e.target === mask) closeModal(); });
+        wpModal.addEventListener('click', function(e) {
+            if (e.target === wpModal || e.target === wpImg) closeWallpaper();
+        });
+
+        // 键盘：Esc 关所有弹窗；← → 翻灯箱
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') { closeModal(); closeWallpaper(); closeLightbox(); }
+            else if (e.key === 'ArrowLeft' && lbModal.classList.contains('show')) lightboxPrev();
+            else if (e.key === 'ArrowRight' && lbModal.classList.contains('show')) lightboxNext();
+        });
+
+        // ============ 初始化 ============
+        loadData().then(function(d) {
+            if (d && d.items && d.items.length) {
+                applyBg(d.items[0].full);   // 背景 = 今日 4K
+            }
+            renderGallery();
+        });
+    </script>
+    <script>
+        // 累计运行时间
+        var s1 = '2019-06-16';
+        s1 = new Date(s1.replace(/-/g, "/"));
+        var s2 = new Date();
+        var days = s2.getTime() - s1.getTime();
+        var number_of_days = parseInt(days / (1000 * 60 * 60 * 24));
+        document.getElementById('days').innerHTML = number_of_days;
+    </script>
+</body>
+</html>
