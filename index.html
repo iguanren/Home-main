@@ -84,7 +84,7 @@
         </div>
         <div class="wallpaper-stage" id="wallpaper-stage">
             <div class="wallpaper-toolbar">
-                <a id="wp-download" href="#" download="bing-wallpaper.jpg" target="_blank">下载原图</a>
+                <button id="wp-download" type="button">下载原图</button>
             </div>
             <img id="wp-img" alt="必应壁纸" />
         </div>
@@ -94,7 +94,7 @@
     <div class="lightbox" id="lightbox">
         <div class="lightbox-stage">
             <div class="lightbox-toolbar">
-                <a id="lb-download" href="#" download="bing-wallpaper.jpg" target="_blank">下载原图</a>
+                <button id="lb-download" type="button">下载原图</button>
                 <button id="lb-close" type="button" aria-label="关闭">✕</button>
             </div>
             <div class="lightbox-img-wrap" id="lb-img-wrap">
@@ -309,6 +309,7 @@
         var lbLoading = document.getElementById('lb-loading');
         var lbIndex = 0;
         var currentList = [];   // 当前展示的列表（灯箱基于它翻页）
+        var currentLbItem = null;   // 灯箱当前展示的壁纸条目（供下载按钮取 4K 直链）
 
         function openLightbox(index) {
             currentList = currentFilter
@@ -335,7 +336,7 @@
             };
             lbImg.src = item.full;
             lbImg.alt = item.title;
-            document.getElementById('lb-download').href = item.full;
+            currentLbItem = item;
             document.getElementById('lb-date').textContent = item.dateLabel;
             document.getElementById('lb-title').textContent = item.title;
             document.getElementById('lb-copyright').textContent = item.copyright || '';
@@ -359,12 +360,55 @@
         });
         document.getElementById('lb-close').addEventListener('click', closeLightbox);
 
+        // ============ 4K 原图直接下载（点击即下载，不再跳转打开必应） ============
+        // 原理：必应 CDN 放行 CORS（Access-Control-Allow-Origin: *），浏览器直接 fetch 拿图
+        //  → blob 本地生成 → a.download 强制下载；iOS 不支持 a.download，改用系统分享存相册；
+        //  网络异常兜底打开必应原图（保留原体验）。
+        var dlBusy = false, dlBtnEl = null;
+        function downloadImage(url, name) {
+            if (dlBusy || !url) return;
+            dlBusy = true;
+            var btn = dlBtnEl, oldText = btn ? btn.textContent : '';
+            if (btn) { btn.disabled = true; btn.textContent = '下载中…'; }
+            function done() { if (btn) { btn.disabled = false; btn.textContent = oldText; } dlBusy = false; }
+            fetch(url)
+                .then(function(r) { if (!r.ok) throw new Error('net'); return r.blob(); })
+                .then(function(blob) {
+                    var fname = (name || 'bing-wallpaper').replace(/[\\/:*?"<>|]/g, '_') + '.jpg';
+                    var file = new File([blob], fname, { type: 'image/jpeg' });
+                    var isIOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+                    if (isIOS && navigator.canShare && navigator.canShare({ files: [file] })) {
+                        // iOS 不支持 a.download：走系统分享（可存相册、发微信等）
+                        return navigator.share({ files: [file], title: fname }).catch(function(e) {
+                            if (e && e.name === 'AbortError') return;                // 用户取消：静默
+                            window.open(URL.createObjectURL(blob), '_blank');        // 其他失败：打开图，长按可存
+                        });
+                    }
+                    // 桌面 / 安卓：blob 本地 URL + download 属性强制下载
+                    var a = document.createElement('a');
+                    a.href = URL.createObjectURL(blob);
+                    a.download = fname;
+                    document.body.appendChild(a);
+                    a.click();
+                    setTimeout(function() { URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+                })
+                .catch(function() { window.open(url, '_blank'); })                   // 网络异常：兜底打开必应原图
+                .then(done);
+        }
+        function dlName(item) { return item ? (item.date + '-' + (item.title || 'bing-wallpaper')) : 'bing-wallpaper'; }
+
+        document.getElementById('lb-download').addEventListener('click', function() {
+            dlBtnEl = this;
+            downloadImage(currentLbItem ? currentLbItem.full : '', dlName(currentLbItem));
+        });
+
         // ============ 壁纸全屏弹窗（昨日/今日壁纸） ============
         var wpModal = document.getElementById('wallpaper-modal');
         var wpImg = document.getElementById('wp-img');
         var wpLoading = document.getElementById('wallpaper-loading');
         var wpDownload = document.getElementById('wp-download');
         var wpStage = document.getElementById('wallpaper-stage');
+        var currentWpItem = null, currentWpUrl = '';   // 弹窗当前壁纸条目/直链（供下载按钮用）
 
         function openWallpaper(item) {
             wpImg.style.display = 'none';
@@ -385,7 +429,8 @@
                     });
                 };
                 wpImg.src = url;
-                wpDownload.href = url;
+                currentWpUrl = url;
+                currentWpItem = item ? item : null;
             }
 
             if (item && item.full) {
@@ -394,6 +439,11 @@
                 wpLoading.innerHTML = '<p style="color:#fff">暂无该日壁纸数据，请稍后再试</p>';
             }
         }
+
+        document.getElementById('wp-download').addEventListener('click', function() {
+            dlBtnEl = this;
+            downloadImage(currentWpUrl, dlName(currentWpItem));
+        });
 
         // 按日期找壁纸条目（YYYYMMDD）
         function findItemByDate(ymd) {

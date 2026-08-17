@@ -594,7 +594,7 @@ footer p {
     display: flex;
     gap: 10px;
 }
-.wallpaper-toolbar a {
+.wallpaper-toolbar button {
     padding: 10px 22px;
     background: rgba(255, 255, 255, 0.22);
     backdrop-filter: blur(10px);
@@ -605,10 +605,14 @@ footer p {
     border-radius: 999px;
     font-size: 14px;
     font-weight: 600;
+    font-family: inherit;
+    line-height: 1.4;
+    cursor: pointer;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
     transition: background 0.2s, transform 0.2s;
 }
-.wallpaper-toolbar a:hover { background: rgba(255, 255, 255, 0.4); transform: translateY(-1px); }
+.wallpaper-toolbar button:hover { background: rgba(255, 255, 255, 0.4); transform: translateY(-1px); }
+.wallpaper-toolbar button:disabled { cursor: wait; opacity: 0.75; }
 
 /* ============================================================
    灯箱（卡片点击放大：4K 大图 + 右上下载/关闭 + 图下信息居中）
