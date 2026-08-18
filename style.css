@@ -525,10 +525,6 @@ footer p {
 }
 
 /* ============================================================
-   通用弹窗（流量卡 iframe）
-   ============================================================ */
-
-/* ============================================================
    壁纸全屏弹窗（昨日/今日壁纸 → 全屏铺满）
    ============================================================ */
 .wallpaper-modal {
@@ -775,4 +771,15 @@ footer p {
     .lightbox-toolbar button { font-size: 14px; padding: 6px 12px; }
     .lightbox-info { bottom: 16px; }
     .lb-title { font-size: 15px; }
+}
+
+/* ============================================================
+   尊重系统"减弱动态效果"设置：动画/过渡几乎立即完成
+   ============================================================ */
+@media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
 }

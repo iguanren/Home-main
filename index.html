@@ -172,13 +172,30 @@
         } catch (e) {}
 
         // ============ 数据加载：data.json（Actions 每日生成） ============
+        // 优化：localStorage 缓存秒开（弱网/离线也能立即看到上次壁纸），fetch 完成后自动刷新
         var WALLPAPERS = [];   // 全部壁纸条目（按日期倒序，新在前）
+        var WP_CACHE_KEY = 'bing_wp_cache_v1';
 
         function loadData() {
+            var cached = null;
+            try { cached = JSON.parse(localStorage.getItem(WP_CACHE_KEY) || 'null'); } catch (e) {}
+            // 缓存秒开：先用上次数据渲染（首屏背景不灰屏），fetch 完成后自动刷新
+            if (cached && cached.items && cached.items.length) {
+                WALLPAPERS = cached.items;
+                todayStr = cached.today || todayStr;
+                try { applyBg(cached.items[0].full); renderGallery(); } catch (e) {}
+            }
             return fetch('data.json', { cache: 'no-cache' })
                 .then(function(r) { if (!r.ok) throw new Error('data.json ' + r.status); return r.json(); })
-                .then(function(d) { WALLPAPERS = d.items || []; return d; })
-                .catch(function(e) { console.error('加载壁纸数据失败:', e); });
+                .then(function(d) {
+                    WALLPAPERS = d.items || [];
+                    try { localStorage.setItem(WP_CACHE_KEY, JSON.stringify(d)); } catch (e) {}
+                    return d;
+                })
+                .catch(function(e) {
+                    console.error('加载壁纸数据失败:', e);
+                    return cached || {};   // 网络异常回退缓存（至少能看到旧数据）
+                });
         }
 
         // ============ 背景：今日 4K 热链（随页面滚动，非 fixed） ============
