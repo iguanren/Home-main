@@ -183,7 +183,7 @@
             if (cached && cached.items && cached.items.length) {
                 WALLPAPERS = cached.items;
                 todayStr = cached.today || todayStr;
-                try { applyBg(cached.items[0].full); renderGallery(); } catch (e) {}
+                try { applyBg(cached.items[0]); renderGallery(); } catch (e) {}
             }
             return fetch('data.json', { cache: 'no-cache' })
                 .then(function(r) { if (!r.ok) throw new Error('data.json ' + r.status); return r.json(); })
@@ -198,8 +198,14 @@
                 });
         }
 
-        // ============ 背景：今日 4K 热链（随页面滚动，非 fixed） ============
-        function applyBg(url) {
+        // ============ 背景：今日壁纸热链（随页面滚动，非 fixed） ============
+        // 优化：手机端用 1920 中等图（3.7MB→320KB，首次加载秒出）；桌面才用 4K
+        function applyBg(item) {
+            if (!item || !item.full) return;
+            var url = item.full;
+            if (window.innerWidth < 768 && item.urlbase) {
+                url = 'https://cn.bing.com' + item.urlbase + '_1920x1080.jpg';
+            }
             var main = document.getElementById('main');
             if (main) main.style.background = 'url(' + url + ') center/cover no-repeat';
             var photo = document.querySelector('.photo-bg');
@@ -550,7 +556,7 @@
             d = d || {};              // 兜底：data.json 加载失败时 d 为 undefined
             todayStr = d.today || '';
             if (d.items && d.items.length) {
-                applyBg(d.items[0].full);   // 背景 = 今日 4K
+                applyBg(d.items[0]);   // 背景 = 今日壁纸（手机 1920 / 桌面 4K）
             }
             renderGallery();
         });
