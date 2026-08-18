@@ -234,6 +234,19 @@
                 }
             });
             updateFilterBar();
+            // 滚动预加载：当前卡片距视口还有一段缓冲时，把它 Lazy 的缩略图提前成 eager 加载，滚动到跟前直接出图更跟手
+            if ('IntersectionObserver' in window) {
+                var prefetchIO = new IntersectionObserver(function(entries) {
+                    entries.forEach(function(en) {
+                        if (en.isIntersecting) {
+                            var img = en.target;
+                            if (img.loading === 'lazy') img.loading = 'eager';
+                            prefetchIO.unobserve(img);
+                        }
+                    });
+                }, { rootMargin: '600px 0px' });   // 提前约 600px 开始加载
+                grid.querySelectorAll('.wp-card img').forEach(function(img) { prefetchIO.observe(img); });
+            }
         }
 
         // 提取全部有数据的月份，新→旧
@@ -322,19 +335,30 @@
             document.body.style.overflow = 'hidden';
         }
 
+        // 必应官方规格：_400x240 缩略图 / _1920x1080 中等图 / _UHD 4K 原图
+        function midFor(item) { return 'https://cn.bing.com' + item.urlbase + '_1920x1080.jpg'; }
+
         function renderLightbox() {
             var item = currentList[lbIndex];
             lbImg.style.opacity = '0';
             lbLoading.style.display = 'flex';
-            lbLoading.innerHTML = '<div class="wp-spin"></div><p>正在加载 4K 原图...</p>';   // 重置，避免残留上次的错误文案
+            lbLoading.innerHTML = '<div class="wp-spin"></div><p>正在加载...</p>';   // 重置，避免残留上次的错误文案
+            // 1) 先加载 1920 中等图（几百 KB，秒开预览）
             lbImg.onload = function() {
                 lbImg.style.opacity = '1';
                 lbLoading.style.display = 'none';
+                // 2) 中等图已显示，后台懒加载 4K，加载完无缝替换（无感升级）
+                var hd = new Image();
+                hd.decoding = 'async';
+                hd.onload = function() { if (currentLbItem === item) lbImg.src = hd.src; };
+                hd.src = item.full;
             };
             lbImg.onerror = function() {
+                // 中等图挂了：直接退到 4K 原图
+                if (lbImg.src.indexOf('_1920x1080') !== -1) { lbImg.src = item.full; return; }
                 lbLoading.innerHTML = '<p>图片加载失败，请检查网络后重试</p>';
             };
-            lbImg.src = item.full;
+            lbImg.src = midFor(item);
             lbImg.alt = item.title;
             currentLbItem = item;
             document.getElementById('lb-date').textContent = item.dateLabel;
