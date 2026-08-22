@@ -141,7 +141,9 @@ html {
     margin: 5px 0;
     width: 100%;
     padding: 12px 40px;
-    transition: all 0.3s ease;
+    /* 只动画 transform 和 opacity，不碰 background/shadow，触发 GPU 合成 */
+    transition: transform 0.35s cubic-bezier(0.22, 0.8, 0.3, 1),
+                opacity 0.3s ease;
     background: rgba(255, 255, 255, 0.45);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
@@ -154,6 +156,23 @@ html {
     cursor: pointer;
     font-size: 16px;
     color: #333;
+    /* 入场动画：依次上浮淡入 */
+    animation: btn-in 0.5s cubic-bezier(0.22, 0.8, 0.3, 1) backwards;
+}
+/* 三个按钮阶梯延迟 */
+.btn-row .btn:nth-child(1) { animation-delay: 0.1s; }
+.btn-row .btn:nth-child(2) { animation-delay: 0.2s; }
+.btn-row .btn:nth-child(3) { animation-delay: 0.3s; }
+@keyframes btn-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+/* hover：只变 transform，背景色不动画（避免合成器溢出） */
+.btn:hover {
+    transform: translateY(-2px);
+}
+.btn:active {
+    transform: translateY(0);
 }
 .btn-primary { background: rgba(91, 127, 255, 0.15); border-color: rgba(91, 127, 255, 0.4); color: #2563eb; }
 .btn-primary:hover { background: rgba(91, 127, 255, 0.3); box-shadow: 0 6px 20px rgba(91, 127, 255, 0.2); transform: translateY(-2px); }
@@ -827,5 +846,10 @@ footer p {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
+    }
+    /* 按钮入场 + hover 全部禁用 */
+    .btn, .my-card, .wp-card, .lightbox-stage, .archive-box {
+        animation: none !important;
+        transition: none !important;
     }
 }
